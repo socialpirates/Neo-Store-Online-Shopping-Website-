@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoStore | My Account</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <div class="logo">NeoStore</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="products.html#cart">Cart <span id="cartCount" class="badge">0</span></a></li>
+      <li><a href="dashboard.html">My Account</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="container">
+  <h1 class="section-title">My Account</h1>
+
+  <div class="dashboard-layout">
+    <div>
+      <div class="panel">
+        <div id="profileHeader" class="profile-header">
+          <h2 id="profileName">Hello, Guest</h2>
+          <p>Unique profile theme based on your preference.</p>
+          <div class="theme-selector">
+            <div class="theme-pill" data-theme="sunset"
+                 style="background:linear-gradient(120deg,#ff7b00,#ff0080);"></div>
+            <div class="theme-pill" data-theme="ocean"
+                 style="background:linear-gradient(120deg,#1d3557,#457b9d);"></div>
+            <div class="theme-pill" data-theme="forest"
+                 style="background:linear-gradient(120deg,#2a9d8f,#264653);"></div>
+            <div class="theme-pill" data-theme="mono"
+                 style="background:linear-gradient(120deg,#333,#777);"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Past Searches</h3>
+        <ul id="pastSearches" class="simple-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>Recent Search</h3>
+        <ul id="recentSearches" class="simple-list"></ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Order History</h3>
+        <ul id="orderHistory" class="simple-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>Personalized Recommendations</h3>
+        <p class="small-text">
+          Suggested items based on your searches and purchases.
+        </p>
+        <ul id="recommendations" class="simple-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h3>My Favourites</h3>
+        <ul id="favoriteList" class="simple-list"></ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+ © 2026 NeoStore.Devloped by Sourav Paul.
+</footer>
+
+<script src="app.js"></script>
+<script>
+  updateCartCount();
+
+  const profileHeader = document.getElementById('profileHeader');
+  const profileName = document.getElementById('profileName');
+  const pastSearchesUl = document.getElementById('pastSearches');
+  const recentSearchesUl = document.getElementById('recentSearches');
+  const orderHistoryUl = document.getElementById('orderHistory');
+  const recommendationsUl = document.getElementById('recommendations');
+  const favoriteListUl = document.getElementById('favoriteList');
+
+  function setTheme(theme) {
+    let bg;
+    switch (theme) {
+      case 'ocean':
+        bg = 'linear-gradient(120deg,#1d3557,#457b9d)'; break;
+      case 'forest':
+        bg = 'linear-gradient(120deg,#2a9d8f,#264653)'; break;
+      case 'mono':
+        bg = 'linear-gradient(120deg,#333,#777)'; break;
+      case 'sunset':
+      default:
+        bg = 'linear-gradient(120deg,#ff7b00,#ff0080)';
+    }
+    profileHeader.style.background = bg;
+    localStorage.setItem(STORAGE_KEYS.THEME, theme);
+  }
+
+  document.querySelectorAll('.theme-pill').forEach(pill => {
+    pill.addEventListener('click', () => setTheme(pill.dataset.theme));
+  });
+
+  function renderDashboard() {
+    const name = localStorage.getItem(STORAGE_KEYS.NAME) || 'Guest';
+    profileName.textContent = 'Hello, ' + name;
+
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'sunset';
+    setTheme(savedTheme);
+
+    const searches = loadJSON(STORAGE_KEYS.SEARCHES, []);
+    pastSearchesUl.innerHTML = '';
+    searches.slice(1).forEach(term => {
+      const li = document.createElement('li');
+      li.textContent = term;
+      pastSearchesUl.appendChild(li);
+    });
+
+    const last = localStorage.getItem(STORAGE_KEYS.LAST_SEARCH);
+    recentSearchesUl.innerHTML = '';
+    const li = document.createElement('li');
+    li.textContent = last || 'No recent search.';
+    recentSearchesUl.appendChild(li);
+
+    const orders = loadJSON(STORAGE_KEYS.ORDERS, []);
+    orderHistoryUl.innerHTML = '';
+    if (!orders.length) {
+      orderHistoryUl.innerHTML = '<li>No orders yet.</li>';
+    } else {
+      orders.forEach(o => {
+        const li = document.createElement('li');
+        li.textContent = `${o.id} · ₹${o.total} · ${o.placedAt}`;
+        orderHistoryUl.appendChild(li);
+      });
+    }
+
+    const scores = {};
+    searches.forEach(term => {
+      PRODUCTS.forEach(p => {
+        const text = (p.name + ' ' + p.brand + ' ' + p.category).toLowerCase();
+        if (text.includes(term.toLowerCase())) {
+          scores[p.id] = (scores[p.id] || 0) + 1;
+        }
+      });
+    });
+    orders.forEach(o => {
+      o.items.forEach(it => {
+        scores[it.id] = (scores[it.id] || 0) + 2;
+      });
+    });
+
+    const ranked = Object.entries(scores)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([id]) => PRODUCTS.find(p => p.id === Number(id)))
+      .filter(Boolean);
+
+    recommendationsUl.innerHTML = '';
+    if (!ranked.length) {
+      recommendationsUl.innerHTML = '<li>Start searching and ordering to see recommendations.</li>';
+    } else {
+      ranked.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.name} (${p.category}) - ₹${p.price}`;
+        recommendationsUl.appendChild(li);
+      });
+    }
+
+    const favIds = getFavorites();
+    favoriteListUl.innerHTML = '';
+    if (!favIds.length) {
+      favoriteListUl.innerHTML = '<li>No favourites yet. Use the heart icon on products.</li>';
+    } else {
+      favIds.forEach(id => {
+        const p = PRODUCTS.find(x => x.id === id);
+        if (!p) return;
+        const li = document.createElement('li');
+        li.textContent = `${p.name} (${p.category}) - ₹${p.price}`;
+        favoriteListUl.appendChild(li);
+      });
+    }
+  }
+
+  renderDashboard();
+</script>
+</body>
+</html>
