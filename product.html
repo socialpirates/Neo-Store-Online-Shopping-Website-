@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoStore | Product</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <div class="logo">NeoStore</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html">Cart <span id="cartCount" class="badge">0</span></a></li>
+      <li><a href="dashboard.html">My Account</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="container">
+  <section id="pdpMain" class="panel">
+    <div id="pdpContent">Loading product...</div>
+  </section>
+
+  <section class="panel">
+    <h3>Reviews</h3>
+    <ul id="pdpReviews" class="simple-list"></ul>
+  </section>
+
+  <section class="panel">
+    <h3>Relevant products</h3>
+    <div id="pdpRelevant" class="products-grid"></div>
+  </section>
+
+  <section class="panel">
+    <h3>Your previous searches</h3>
+    <ul id="pdpSearches" class="simple-list"></ul>
+  </section>
+</main>
+
+<footer class="site-footer">
+  © 2026 NeoStore.Devloped by Sourav Paul.
+</footer>
+
+<script src="app.js"></script>
+<script>
+  updateCartCount();
+
+  const params = new URLSearchParams(window.location.search);
+  const idParam = Number(params.get('id'));
+  const pdpContent = document.getElementById('pdpContent');
+  const pdpReviews = document.getElementById('pdpReviews');
+  const pdpRelevant = document.getElementById('pdpRelevant');
+  const pdpSearches = document.getElementById('pdpSearches');
+
+  const product = PRODUCTS.find(p => p.id === idParam);
+
+  if (!product) {
+    pdpContent.innerHTML = '<p>Product not found.</p>';
+  } else {
+    // track recently viewed
+    let viewed = loadJSON('neo_viewed', []);
+    viewed = viewed.filter(v => v !== product.id);
+    viewed.unshift(product.id);
+    viewed = viewed.slice(0, 10);
+    saveJSON('neo_viewed', viewed);
+
+    const isFav = isFavorite(product.id);
+    const heartChar = isFav ? '❤️' : '🤍';
+
+    pdpContent.innerHTML = `
+      <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,2fr);gap:1.5rem;align-items:flex-start;">
+        <div>
+          <img src="${product.image}" alt="${product.name}"
+               style="width:100%;max-width:420px;border-radius:10px;object-fit:cover;">
+        </div>
+        <div>
+          <h1 class="section-title" style="margin-top:0;">${product.name}</h1>
+          <div class="product-meta">
+            <span>${product.brand}</span> ·
+            <span>${product.category}</span> ·
+            <span>★ ${product.rating}</span>
+          </div>
+          <div class="price" style="font-size:1.3rem;">₹${product.price}</div>
+          <p style="margin:0.5rem 0 0.8rem;font-size:0.95rem;">
+            ${product.description || ''}
+          </p>
+
+          <ul style="margin:0.4rem 0 0.8rem 1rem;font-size:0.9rem;">
+            <li>Category: ${product.category}</li>
+            <li>Brand: ${product.brand}</li>
+            <li>Rating: ★ ${product.rating} / 5</li>
+          </ul>
+
+          <div style="display:flex;align-items:center;gap:0.4rem;margin:0.6rem 0;">
+            <input type="number" min="1" value="1"
+                   id="pdpQty"
+                   style="width:60px;padding:0.3rem 0.4rem;border:1px solid:#d1d5db;border-radius:4px;font-size:0.9rem;">
+            <button class="btn" id="pdpAdd">Add to cart</button>
+            <button id="pdpFav"
+                    style="border:none;background:#f3f4f6;border-radius:999px;padding:0.4rem 0.8rem;font-size:0.9rem;cursor:pointer;">
+              ${heartChar} Favourite
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('pdpAdd').addEventListener('click', () => {
+      const qty = Number(document.getElementById('pdpQty').value) || 1;
+      addToCart(product.id, qty);
+      alert('Added ' + qty + ' item(s) to cart');
+    });
+
+    document.getElementById('pdpFav').addEventListener('click', (e) => {
+      const favsAfter = toggleFavorite(product.id);
+      const isNowFav = favsAfter.includes(product.id);
+      e.currentTarget.innerHTML = (isNowFav ? '❤️' : '🤍') + ' Favourite';
+    });
+
+    // Simple dummy reviews to show layout
+    const fakeReviews = [
+      { user: "Amit", rating: 5, text: "Very good quality, worth the price." },
+      { user: "Sara", rating: 4, text: "Happy with the product, delivery was quick." },
+      { user: "Ravi", rating: 4, text: "Matches the description and images." }
+    ];
+    pdpReviews.innerHTML = '';
+    fakeReviews.forEach(r => {
+      const li = document.createElement('li');
+      li.textContent = `${r.user} · ★ ${r.rating} – ${r.text}`;
+      pdpReviews.appendChild(li);
+    });
+
+    // Relevant products (same category)
+    const rel = PRODUCTS
+      .filter(p => p.id !== product.id && p.category === product.category)
+      .slice(0, 4);
+    if (!rel.length) {
+      pdpRelevant.innerHTML = '<p>No relevant products yet.</p>';
+    } else {
+      rel.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div style="cursor:pointer;" class="pdp-link">
+            <img src="${p.image}" alt="${p.name}"
+                 style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:0.4rem;">
+            <h4>${p.name}</h4>
+          </div>
+          <div class="product-meta">
+            <span>${p.brand}</span> ·
+            <span>₹${p.price}</span>
+          </div>
+        `;
+        card.querySelector('.pdp-link').addEventListener('click', () => {
+          window.location.href = 'product.html?id=' + p.id;
+        });
+        pdpRelevant.appendChild(card);
+      });
+    }
+
+    // Previous searches list
+    const searches = loadJSON(STORAGE_KEYS.SEARCHES, []);
+    pdpSearches.innerHTML = '';
+    if (!searches.length) {
+      pdpSearches.innerHTML = '<li>No previous searches yet.</li>';
+    } else {
+      searches.slice(0, 8).forEach(term => {
+        const li = document.createElement('li');
+        li.textContent = term;
+        li.style.cursor = 'pointer';
+        li.addEventListener('click', () => {
+          const url = new URL('products.html', window.location.href);
+          url.searchParams.set('q', term);
+          window.location.href = url.toString();
+        });
+        pdpSearches.appendChild(li);
+      });
+    }
+  }
+</script>
+</body>
+</html>
