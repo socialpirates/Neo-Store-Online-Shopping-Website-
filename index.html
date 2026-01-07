@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoStore | Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <div class="logo">NeoStore</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html">Cart <span id="cartCount" class="badge">0</span></a></li>
+      <li><a href="dashboard.html">My Account</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="quick-bar">
+  <div class="quick-bar-inner">
+    <span class="quick-link" data-jump="groceries">Groceries</span>
+    <span class="quick-link" data-jump="fashion">Fashion</span>
+    <span class="quick-link" data-jump="electronics">Electronics</span>
+    <span class="quick-link" data-jump="watches">Watches</span>
+    <span class="quick-link" data-jump="books">Books</span>
+  </div>
+</div>
+
+<main class="home-shell">
+  <section class="hero-clean">
+    <div class="hero-text">
+      <h1>Your daily store for groceries, fashion & gadgets</h1>
+      <p>
+        Browse curated deals across basmati rice, T‑shirts, earphones, watches
+        and bestselling books in one smooth experience.
+      </p>
+      <div class="hero-badges">
+        <span class="hero-badge">Groceries under ₹199</span>
+        <span class="hero-badge">Up to 40% off electronics</span>
+        <span class="hero-badge">Top rated smartwatches</span>
+      </div>
+      <div class="hero-search-wrap search-wrapper">
+        <input id="homeSearchInput" type="text"
+               placeholder="Search for products, brands and more..." autocomplete="off" />
+        <button class="btn" id="homeSearchBtn">Search</button>
+        <div id="searchSuggestions" class="search-suggestions hidden"></div>
+      </div>
+    </div>
+    <div class="hero-side">
+      <img
+        src="https://images.pexels.com/photos/5632371/pexels-photo-5632371.jpeg?auto=compress&cs=tinysrgb&w=800"
+        alt="Shopping illustration" />
+    </div>
+  </section>
+
+  <section class="trust-strip">
+    <div class="trust-card">
+      <div class="trust-icon">₹</div>
+      <div>Secure payments with popular methods.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">↩</div>
+      <div>Easy returns on eligible items.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">⚡</div>
+      <div>Fast delivery on selected products.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">?</div>
+      <div>Support for orders & queries.</div>
+    </div>
+  </section>
+
+  <section id="section-deal">
+    <div class="section-head">
+      <h2>Deal of the Day</h2>
+      <a href="products.html">View all deals</a>
+    </div>
+    <div id="dealCard" class="deal-card"></div>
+  </section>
+
+  <section id="section-categories">
+    <div class="section-head">
+      <h2>Browse by category</h2>
+      <a href="products.html">View full catalog</a>
+    </div>
+    <div class="home-categories">
+      <div class="home-category-card" id="anchor-groceries">
+        <h3>Groceries</h3>
+        <ul>
+          <li>Premium rice & staples</li>
+          <li>Cooking oils & essentials</li>
+        </ul>
+        <a class="more-link" href="products.html?category=Groceries">Shop groceries</a>
+      </div>
+
+      <div class="home-category-card" id="anchor-fashion">
+        <h3>Fashion</h3>
+        <ul>
+          <li>Casual T‑shirts & shirts</li>
+          <li>Floral dresses & more</li>
+        </ul>
+        <a class="more-link" href="products.html?category=Dresses">Explore fashion</a>
+      </div>
+
+      <div class="home-category-card" id="anchor-electronics">
+        <h3>Electronics</h3>
+        <ul>
+          <li>Earbuds, phones & laptops</li>
+          <li>Smart gadgets for daily use</li>
+        </ul>
+        <a class="more-link" href="products.html?category=Electronics">Shop electronics</a>
+      </div>
+
+      <div class="home-category-card" id="anchor-books">
+        <h3>Books & Watches</h3>
+        <ul>
+          <li>Self‑help & tech titles</li>
+          <li>Analog & smartwatches</li>
+        </ul>
+        <a class="more-link" href="products.html">See full catalog</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Trending offers</h2>
+      <a href="products.html">View all</a>
+    </div>
+    <div id="stripTrending" class="strip"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Recommended for you</h2>
+      <a href="dashboard.html">View full personalized catalog</a>
+    </div>
+    <div id="stripRecommended" class="strip"></div>
+  </section>
+
+  <section id="section-groceries">
+    <div class="section-head">
+      <h2>Everyday grocery essentials</h2>
+      <a href="products.html?category=Groceries">See all groceries</a>
+    </div>
+    <div id="stripGroceries" class="strip"></div>
+  </section>
+
+  <section id="section-electronics">
+    <div class="section-head">
+      <h2>Top picks in electronics</h2>
+      <a href="products.html?category=Electronics">See more electronics</a>
+    </div>
+    <div id="stripElectronics" class="strip"></div>
+  </section>
+
+  <section id="section-books">
+    <div class="section-head">
+      <h2>Readers are loving</h2>
+      <a href="products.html?category=Books">See all books</a>
+    </div>
+    <div id="stripBooks" class="strip"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  © 2026 NeoStore.Devloped by Sourav Paul.
+</footer>
+
+<div id="toast" class="toast">Added to cart</div>
+
+<script src="app.js"></script>
+<script>
+  updateCartCount();
+
+  const homeSearchInput = document.getElementById('homeSearchInput');
+  const homeSearchBtn = document.getElementById('homeSearchBtn');
+  const suggestionsBox = document.getElementById('searchSuggestions');
+
+  function goToSearch(term, category) {
+    const params = new URLSearchParams();
+    if (term) params.set('q', term);
+    if (category) params.set('category', category);
+    const query = params.toString();
+    window.location.href = 'products.html' + (query ? '?' + query : '');
+  }
+
+  function triggerHomeSearch() {
+    const term = homeSearchInput.value.trim();
+    if (!term) return;
+    logSearch(term);
+    goToSearch(term);
+  }
+
+  homeSearchBtn.addEventListener('click', () => {
+    triggerHomeSearch();
+    hideSuggestions();
+  });
+
+  homeSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      triggerHomeSearch();
+      hideSuggestions();
+    }
+  });
+
+  function hideSuggestions() {
+    suggestionsBox.classList.add('hidden');
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!suggestionsBox.contains(e.target) && e.target !== homeSearchInput) {
+      hideSuggestions();
+    }
+  });
+
+  function buildSuggestions(term) {
+    const q = term.trim().toLowerCase();
+    if (!q) {
+      hideSuggestions();
+      return;
+    }
+
+    const exactProducts = PRODUCTS.filter(p =>
+      p.name.toLowerCase() === q || p.brand.toLowerCase() === q
+    );
+
+    const relevantProducts = PRODUCTS.filter(p => {
+      const text = (p.name + ' ' + p.brand + ' ' + p.category + ' ' + (p.description || '')).toLowerCase();
+      return text.includes(q);
+    }).filter(p => !exactProducts.includes(p));
+
+    const altProducts = PRODUCTS.filter(p => {
+      const text = (p.name + ' ' + (p.description || '')).toLowerCase();
+      const words = q.split(/\s+/).filter(Boolean);
+      return words.some(w => text.includes(w));
+    }).filter(p => !exactProducts.includes(p) && !relevantProducts.includes(p));
+
+    const categories = Array.from(new Set(PRODUCTS.map(p => p.category)))
+      .filter(c => c.toLowerCase().includes(q));
+
+    suggestionsBox.innerHTML = '';
+
+    function addGroup(title, items, renderer) {
+      if (!items || !items.length) return;
+      const groupTitle = document.createElement('div');
+      groupTitle.className = 'sugg-group-title';
+      groupTitle.textContent = title;
+      suggestionsBox.appendChild(groupTitle);
+      items.forEach(item => {
+        const row = renderer(item);
+        suggestionsBox.appendChild(row);
+      });
+    }
+
+    addGroup('Exact match', exactProducts.slice(0, 4), (p) => {
+      const div = document.createElement('div');
+      div.className = 'sugg-item';
+      div.innerHTML = `
+        <div class="sugg-item-main">
+          <span class="sugg-label">${p.name}</span>
+          <span class="sugg-meta">${p.brand} · ${p.category}</span>
+        </div>
+        <span class="sugg-pill">Product</span>
+      `;
+      div.addEventListener('click', () => goToSearch(p.name, p.category));
+      return div;
+    });
+
+    addGroup('Relevant match', relevantProducts.slice(0, 4), (p) => {
+      const div = document.createElement('div');
+      div.className = 'sugg-item';
+      div.innerHTML = `
+        <div class="sugg-item-main">
+          <span class="sugg-label">${p.name}</span>
+          <span class="sugg-meta">${p.brand} · ${p.category}</span>
+        </div>
+        <span class="sugg-pill">Product</span>
+      `;
+      div.addEventListener('click', () => goToSearch(term, p.category));
+      return div;
+    });
+
+    addGroup('Alternative match', altProducts.slice(0, 4), (p) => {
+      const div = document.createElement('div');
+      div.className = 'sugg-item';
+      div.innerHTML = `
+        <div class="sugg-item-main">
+          <span class="sugg-label">${p.name}</span>
+          <span class="sugg-meta">${p.brand} · ${p.category}</span>
+        </div>
+        <span class="sugg-pill">Alt</span>
+      `;
+      div.addEventListener('click', () => goToSearch(p.name, p.category));
+      return div;
+    });
+
+    addGroup('Categories', categories.slice(0, 5), (cat) => {
+      const div = document.createElement('div');
+      div.className = 'sugg-item';
+      div.innerHTML = `
+        <div class="sugg-item-main">
+          <span class="sugg-label">${cat}</span>
+          <span class="sugg-meta">View all items in ${cat}</span>
+        </div>
+        <span class="sugg-pill">Category</span>
+      `;
+      div.addEventListener('click', () => goToSearch('', cat));
+      return div;
+    });
+
+    if (!suggestionsBox.innerHTML.trim()) {
+      hideSuggestions();
+    } else {
+      suggestionsBox.classList.remove('hidden');
+    }
+  }
+
+  homeSearchInput.addEventListener('input', () => {
+    buildSuggestions(homeSearchInput.value);
+  });
+
+  document.querySelectorAll('.quick-link').forEach(link => {
+    link.addEventListener('click', () => {
+      const target = link.dataset.jump;
+      if (target === 'groceries') {
+        document.getElementById('section-groceries').scrollIntoView({ behavior: 'smooth' });
+      } else if (target === 'fashion') {
+        document.getElementById('anchor-fashion').scrollIntoView({ behavior: 'smooth' });
+      } else if (target === 'electronics') {
+        document.getElementById('section-electronics').scrollIntoView({ behavior: 'smooth' });
+      } else if (target === 'watches') {
+        document.getElementById('anchor-books').scrollIntoView({ behavior: 'smooth' });
+      } else if (target === 'books') {
+        document.getElementById('section-books').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  const toast = document.getElementById('toast');
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1500);
+  }
+
+  const originalAddToCart = addToCart;
+  window.addToCart = function(productId, qty = 1) {
+    originalAddToCart(productId, qty);
+    showToast('Added ' + qty + ' item(s) to cart');
+  };
+
+  function renderStrip(containerId, products) {
+    const strip = document.getElementById(containerId);
+    strip.innerHTML = '';
+    if (!products.length) {
+      strip.innerHTML = '<span style="font-size:0.85rem;color:#6b7280;">No items to show yet.</span>';
+      return;
+    }
+    const favs = getFavorites();
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'strip-card';
+
+      const heartFilled = favs.includes(p.id);
+      const heartChar = heartFilled ? '❤️' : '🤍';
+
+      card.innerHTML = `
+        <div style="position:relative;">
+          <img src="${p.image}" alt="${p.name}">
+          <button class="heart-btn" data-id="${p.id}"
+                  style="position:absolute;top:6px;right:6px;border:none;background:rgba(255,255,255,0.85);border-radius:999px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;cursor:pointer;">
+            ${heartChar}
+          </button>
+        </div>
+        <div class="name">${p.name}</div>
+        <div class="meta">${p.brand} · ★ ${p.rating}</div>
+        <div class="price">₹${p.price}</div>
+        <div class="pill">${p.category}</div>
+        <div style="display:flex;align-items:center;gap:0.3rem;margin-top:0.2rem;">
+          <input type="number" min="1" value="1"
+                 class="qty-input"
+                 style="width:50px;padding:0.2rem 0.3rem;border:1px solid #d1d5db;border-radius:4px;font-size:0.8rem;">
+          <button class="btn add-btn" data-id="${p.id}">Add to cart</button>
+        </div>
+      `;
+
+      card.querySelector('.heart-btn').addEventListener('click', (e) => {
+        const id = p.id;
+        const favsAfter = toggleFavorite(id);
+        e.currentTarget.textContent = favsAfter.includes(id) ? '❤️' : '🤍';
+      });
+
+      const qtyInput = card.querySelector('.qty-input');
+      card.querySelector('.add-btn').addEventListener('click', () => {
+        const qty = qtyInput.value || 1;
+        addToCart(p.id, qty);
+      });
+
+      strip.appendChild(card);
+    });
+  }
+
+  function renderDealOfDay() {
+    const dealContainer = document.getElementById('dealCard');
+    const sorted = [...PRODUCTS].sort((a,b) => b.rating - a.rating || a.price - b.price);
+    const deal = sorted[0];
+    const mrp = Math.round(deal.price * 1.4);
+    const discount = Math.round((1 - deal.price / mrp) * 100);
+
+    dealContainer.innerHTML = `
+      <div class="deal-main">
+        <h3>${deal.name}</h3>
+        <div class="deal-tags">
+          <span class="deal-tag">Deal of the Day</span>
+          <span class="deal-tag">${discount}% off</span>
+        </div>
+        <div class="deal-price">
+          <strong>₹${deal.price}</strong> <span style="text-decoration:line-through;color:#9ca3af;">₹${mrp}</span>
+        </div>
+        <div class="deal-desc">${deal.description || ''}</div>
+        <div class="deal-cta">
+          <button class="btn" id="dealBtn">Add to cart</button>
+          <span>Limited time offer • Popular in ${deal.category}</span>
+        </div>
+      </div>
+      <div class="deal-side">
+        <img src="${deal.image}" alt="${deal.name}">
+      </div>
+    `;
+    document.getElementById('dealBtn').addEventListener('click', () => addToCart(deal.id, 1));
+  }
+
+  function getRecommendedProducts() {
+    const searches = loadJSON(STORAGE_KEYS.SEARCHES, []);
+    const orders = loadJSON(STORAGE_KEYS.ORDERS, []);
+    const scores = {};
+
+    searches.forEach(term => {
+      PRODUCTS.forEach(p => {
+        const text = (p.name + ' ' + p.brand + ' ' + p.category).toLowerCase();
+        if (text.includes(term.toLowerCase())) {
+          scores[p.id] = (scores[p.id] || 0) + 1;
+        }
+      });
+    });
+    orders.forEach(o => {
+      o.items.forEach(it => {
+        scores[it.id] = (scores[it.id] || 0) + 2;
+      });
+    });
+
+    const ranked = Object.entries(scores)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([id]) => PRODUCTS.find(p => p.id === Number(id)))
+      .filter(Boolean);
+
+    return ranked;
+  }
+
+  const groceries = PRODUCTS.filter(p => p.category === 'Groceries');
+  const electronics = PRODUCTS.filter(p => p.category === 'Electronics');
+  const books = PRODUCTS.filter(p => p.category === 'Books');
+
+  const trending = [...PRODUCTS]
+    .sort((a,b) => b.rating - a.rating || a.price - b.price)
+    .slice(0, 8);
+
+  renderDealOfDay();
+  renderStrip('stripTrending', trending);
+  renderStrip('stripGroceries', groceries.slice(0, 8));
+  renderStrip('stripElectronics', electronics.slice(0, 8));
+  renderStrip('stripBooks', books.slice(0, 8));
+  renderStrip('stripRecommended', getRecommendedProducts());
+</script>
+</body>
+</html>
