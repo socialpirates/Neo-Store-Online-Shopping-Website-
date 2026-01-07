@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoStore | Products</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <div class="logo">NeoStore</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html">Cart <span id="cartCount" class="badge">0</span></a></li>
+      <li><a href="dashboard.html">My Account</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="container">
+  <section>
+    <h1 class="section-title">Products</h1>
+
+    <div class="filters">
+      <label>
+        Category:
+        <select id="categoryFilter">
+          <option value="All">All</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Dresses">Dresses</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Watches">Watches</option>
+          <option value="Books">Books</option>
+        </select>
+      </label>
+
+      <label>
+        Sort:
+        <select id="sortFilter">
+          <option value="name">Name A‑Z</option>
+          <option value="priceAsc">Price Low‑High</option>
+          <option value="priceDesc">Price High‑Low</option>
+        </select>
+      </label>
+
+      <input id="productSearchInput" type="text"
+             placeholder="Search in products..." />
+      <button class="btn" id="productSearchBtn">Search</button>
+    </div>
+
+    <div id="productsGrid" class="products-grid"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+© 2026 NeoStore.Devloped by Sourav Paul.
+</footer>
+
+<script src="app.js"></script>
+<script>
+  updateCartCount();
+
+  const productsGrid = document.getElementById('productsGrid');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const sortFilter = document.getElementById('sortFilter');
+  const productSearchInput = document.getElementById('productSearchInput');
+  const productSearchBtn = document.getElementById('productSearchBtn');
+
+  const params = new URLSearchParams(window.location.search);
+  const catParam = params.get('category');
+  const qParam = params.get('q');
+
+  if (catParam) categoryFilter.value = catParam;
+  if (qParam) productSearchInput.value = qParam;
+
+  function getFilteredProducts() {
+    const cat = categoryFilter.value;
+    const term = productSearchInput.value.trim().toLowerCase();
+    let list = [...PRODUCTS];
+
+    if (cat !== 'All') {
+      list = list.filter(p => p.category === cat);
+    }
+    if (term) {
+      list = list.filter(p => {
+        const text = (p.name + ' ' + p.brand + ' ' + p.category + ' ' + (p.description || '')).toLowerCase();
+        return text.includes(term);
+      });
+    }
+
+    const sort = sortFilter.value;
+    if (sort === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === 'priceAsc') {
+      list.sort((a, b) => a.price - b.price);
+    } else {
+      list.sort((a, b) => b.price - a.price);
+    }
+
+    return list;
+  }
+
+  function renderProducts() {
+    const list = getFilteredProducts();
+    const favs = getFavorites();
+    productsGrid.innerHTML = '';
+    if (!list.length) {
+      productsGrid.innerHTML = '<p>No products found.</p>';
+      return;
+    }
+    list.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      const isFav = favs.includes(p.id);
+      const heartChar = isFav ? '❤️' : '🤍';
+      card.innerHTML = `
+        <div style="position:relative;cursor:pointer;" class="pdp-link">
+          <img src="${p.image}" alt="${p.name}"
+               style="width:100%;height:160px;object-fit:cover;border-radius:6px;margin-bottom:0.4rem;">
+          <button class="heart-btn" data-id="${p.id}"
+                  style="position:absolute;top:6px;right:6px;border:none;background:rgba(255,255,255,0.85);border-radius:999px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;cursor:pointer;">
+            ${heartChar}
+          </button>
+        </div>
+        <div>
+          <h4 class="pdp-link" style="cursor:pointer;">${p.name}</h4>
+          <div class="product-meta">
+            <span>${p.category}</span> ·
+            <span>${p.brand}</span> ·
+            <span>★ ${p.rating}</span>
+          </div>
+          <p class="product-desc">
+            ${p.description || ''}
+          </p>
+          <div class="price">₹${p.price}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;margin-top:0.3rem;">
+          <input type="number" min="1" value="1"
+                 class="qty-input"
+                 style="width:55px;padding:0.2rem 0.3rem;border:1px solid #d1d5db;border-radius:4px;font-size:0.8rem;">
+          <button class="btn add-btn" data-id="${p.id}">Add to cart</button>
+        </div>
+      `;
+
+      // Open detail page when image or name is clicked
+      card.querySelectorAll('.pdp-link').forEach(el => {
+        el.addEventListener('click', () => {
+          window.location.href = 'product.html?id=' + p.id;
+        });
+      });
+
+      // Heart toggle
+      card.querySelector('.heart-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const favsAfter = toggleFavorite(p.id);
+        e.currentTarget.textContent = favsAfter.includes(p.id) ? '❤️' : '🤍';
+      });
+
+      const qtyInput = card.querySelector('.qty-input');
+      card.querySelector('.add-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const qty = qtyInput.value || 1;
+        addToCart(p.id, qty);
+        alert('Added ' + qty + ' item(s) to cart');
+      });
+
+      productsGrid.appendChild(card);
+    });
+  }
+
+  categoryFilter.addEventListener('change', renderProducts);
+  sortFilter.addEventListener('change', renderProducts);
+  productSearchBtn.addEventListener('click', () => {
+    const term = productSearchInput.value.trim();
+    if (term) logSearch(term);
+    renderProducts();
+  });
+ 
+  renderProducts();
+</script>
+</body>
+</html>
